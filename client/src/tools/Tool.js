@@ -9,8 +9,10 @@ export default class Tool {
     /**
      * @param {HTMLCanvasElement} canvas - HTML-элемент canvas для рисования.
      */
-    constructor(canvas) {
+    constructor(canvas, socket, id) {
         this.canvas = canvas
+        this.soket = socket
+        this.id = id
 
 
 

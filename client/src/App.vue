@@ -1,24 +1,32 @@
 <template>
-  <ToolBar></ToolBar>
-  <SettingBar></SettingBar>
-  <PaintCanvas></PaintCanvas>
+  <div>
+    <ToolBar />
+    <SettingBar />
+    <PaintCanvas />
+  </div>
 </template>
 
-
 <script>
-import PaintCanvas from "./components/PaintCanvas.vue";
-import SettingBar from "./components/SettingBar.vue";
 import ToolBar from "./components/ToolBar.vue";
+import SettingBar from "./components/SettingBar.vue";
+import PaintCanvas from "./components/PaintCanvas.vue";
+
 export default {
   name: "App",
   components: {
-    PaintCanvas,
     ToolBar,
     SettingBar,
-  }
-}
+    PaintCanvas,
+  },
+  mounted() {
+    if (!window.location.pathname || window.location.pathname === "/") {
+      const newId = (+new Date()).toString(16);
+      window.history.pushState({}, "", `/${newId}`);
+    }
+  },
+};
 </script>
 
 <style>
-  @import "./styles/app.css";
+@import "./styles/app.css";
 </style>
