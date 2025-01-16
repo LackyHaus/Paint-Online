@@ -11,7 +11,7 @@ export default class Tool {
      */
     constructor(canvas, socket, id) {
         this.canvas = canvas
-        this.soket = socket
+        this.socket = socket
         this.id = id
 
 

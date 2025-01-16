@@ -7,8 +7,8 @@ export default class Brush extends Tool {
     /**
      * @param {HTMLCanvasElement} canvas - HTML-элемент canvas для рисования.
      */
-    constructor(canvas, soket, id) {
-        super(canvas, soket, id);
+    constructor(canvas, socket, id) {
+        super(canvas, socket, id);
         this.listen();
     }
 
@@ -20,7 +20,7 @@ export default class Brush extends Tool {
 
     mouseUpHandler() {
         this.mouseDown = false;
-        this.soket.send(
+        this.socket.send(
             JSON.stringify({
                 method: 'draw',
                 id: this.id,
@@ -41,11 +41,7 @@ export default class Brush extends Tool {
 
     mouseMoveHandler(e) {
         if (this.mouseDown) {
-            // this.draw(
-            //     e.pageX - e.target.offsetLeft,
-            //     e.pageY - e.target.offsetTop
-            // );
-            this.soket.send(
+            this.socket.send(
                 JSON.stringify({
                     method: 'draw',
                     id: this.id,
@@ -57,6 +53,7 @@ export default class Brush extends Tool {
                         lineWidth: this.ctx.lineWidth,
                     },
                 }));
+                
         }
     }
 

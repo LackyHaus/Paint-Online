@@ -1,7 +1,7 @@
 <template>
     <div class="toolbar">
-        <button class="toolbar__btn brush" @click="toolstate.setTool(new Brush(canvasState.canvas))"></button>
-        <button class="toolbar__btn rect" @click="toolstate.setTool(new Rect(canvasState.canvas))"></button>
+        <button class="toolbar__btn brush" @click="toolstate.setTool(new Brush(canvasState.canvas, canvasState.socket, canvasState.sessionid))"></button>
+        <button class="toolbar__btn rect" @click="toolstate.setTool(new Rect(canvasState.canvas, canvasState.socket, canvasState.sessionid))"></button>
         <button class="toolbar__btn circle" @click="toolstate.setTool(new Circle(canvasState.canvas))"></button>
         <button class="toolbar__btn eraser" @click="toolstate.setTool(new Eraser(canvasState.canvas))"></button>
         <button class="toolbar__btn line" @click="toolstate.setTool(new Line(canvasState.canvas))"></button>
