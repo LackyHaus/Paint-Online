@@ -7,8 +7,8 @@ export default class Line extends Tool {
     /**
      * @param {HTMLCanvasElement} canvas - HTML-элемент canvas для рисования.
      */
-    constructor(canvas) {
-        super(canvas);
+    constructor(canvas, socket, id) {
+        super(canvas, socket, id);
         this.listen();
     }
 
@@ -20,27 +20,53 @@ export default class Line extends Tool {
 
     mouseUpHandler() {
         this.mouseDown = false;
+        this.restoreCanvasState();
+        
+        this.socket.send(
+            JSON.stringify({
+                method: 'draw',
+                id: this.id,
+                figure: {
+                    type: 'line',
+                    x: this.startX,
+                    y: this.startY,
+                    x2: this.currentX,
+                    y2: this.currentY,
+                    strokeStyle: this.ctx.strokeStyle,
+                    lineWidth: this.ctx.lineWidth,
+                },
+            }));
+        this.paintUp();
     }
 
     mouseDownHandler(e) {
         this.mouseDown = true;
         this.startX = e.pageX - e.target.offsetLeft;
         this.startY = e.pageY - e.target.offsetTop;
-        this.tempCtx.drawImage(this.canvas, 0, 0);
+        this.saveCanvasState();
+    }
+
+    saveCanvasState() {
+        this.savedImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    restoreCanvasState() {
+        if (this.savedImageData) {
+            this.ctx.putImageData(this.savedImageData, 0, 0);
+        }
     }
 
     mouseMoveHandler(e) {
         if (this.mouseDown) {
-            let currentX = e.pageX - e.target.offsetLeft
-            let currentY = e.pageY - e.target.offsetTop
+            this.currentX = e.pageX - e.target.offsetLeft
+            this.currentY = e.pageY - e.target.offsetTop
 
-            this.draw(currentX, currentY);
+            this.draw(this.currentX, this.currentY);
         }
     }
 
     draw(x, y) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.drawImage(this.tempCanvas, 0, 0);
+        this.restoreCanvasState();
         this.ctx.beginPath();
         this.ctx.moveTo(this.startX, this.startY);
         this.ctx.lineTo(x, y);

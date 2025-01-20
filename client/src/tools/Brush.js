@@ -20,14 +20,7 @@ export default class Brush extends Tool {
 
     mouseUpHandler() {
         this.mouseDown = false;
-        this.socket.send(
-            JSON.stringify({
-                method: 'draw',
-                id: this.id,
-                figure: {
-                    type: 'up'
-                },
-            }));
+        this.paintUp();
     }
 
     mouseDownHandler(e) {
@@ -55,10 +48,5 @@ export default class Brush extends Tool {
                 }));
                 
         }
-    }
-
-    static draw(ctx, x, y) {
-        ctx.lineTo(x, y);
-        ctx.stroke();
     }
 }

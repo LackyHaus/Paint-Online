@@ -36,15 +36,7 @@ export default class Circle extends Tool {
                     fillStyle: this.ctx.fillStyle,
                 },
             }));
-        
-        this.socket.send(
-            JSON.stringify({
-                method: 'draw',
-                id: this.id,
-                figure: {
-                    type: 'up'
-                },
-            }));
+        this.paintUp();
     }
 
     mouseDownHandler(e) {

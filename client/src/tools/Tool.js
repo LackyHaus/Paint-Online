@@ -43,4 +43,15 @@ export default class Tool {
         this.canvas.onmousedown = null
         this.canvas.onmousemove = null
     }
+
+    paintUp() {
+        this.socket.send(
+            JSON.stringify({
+                method: 'draw',
+                id: this.id,
+                figure: {
+                    type: 'up'
+                },
+            }));
+    }
 }

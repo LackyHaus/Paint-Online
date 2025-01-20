@@ -1,5 +1,5 @@
 import canvasState from "@/store/canvasState";
-import Brush from "@/tools/Brush";
+import toolstate from "@/store/toolstate";
 
 export default class ToolsSync {
   constructor(msg, socket, id) {
@@ -7,6 +7,9 @@ export default class ToolsSync {
     this.socket = socket;
     this.id = id;
     this.ctx = canvasState.ctx;
+
+    this.saveStatus();
+
     this.ctx.strokeStyle = msg.figure.strokeStyle;
     this.ctx.fillStyle = msg.figure.fillStyle;
     this.ctx.lineWidth = msg.figure.lineWidth;
@@ -18,7 +21,7 @@ export default class ToolsSync {
 
     switch (figure.type) {
       case "brush":
-        Brush.draw(this.ctx, figure.x, figure.y);
+        this.drawBrush(figure.x, figure.y);
         break;
 
       case "rect":
@@ -27,10 +30,6 @@ export default class ToolsSync {
 
       case "circle":
         this.drawCircle(figure.x, figure.y, figure.radius);
-        break;
-
-      case "eraser":
-        // Добавьте логику для ластика
         break;
 
       case "line":
@@ -55,12 +54,19 @@ export default class ToolsSync {
           this.ctx.clearRect(0, 0, canvasState.canvas.width, canvasState.canvas.height);
           this.ctx.drawImage(img, 0, 0);
         };
+        toolstate.tool.paintUp();
         break;
       }
 
       default:
         console.log("Unknown figure type:", figure.type);
     }
+    this.restoreStatus();
+  }
+
+  drawBrush(x, y) { // Рисуем кисть
+    this.ctx.lineTo(x, y);
+    this.ctx.stroke();
   }
 
   drawRect(x, y, w, h) { // Рисуем прямоугольник
@@ -90,5 +96,18 @@ export default class ToolsSync {
         },
       })
     );
+  }
+
+
+  saveStatus() {
+    this.temp_strokeStyle = this.ctx.strokeStyle;
+    this.temp_fillStyle = this.ctx.fillStyle;
+    this.temp_lineWidth = this.ctx.lineWidth;
+  }
+
+  restoreStatus() {
+    this.ctx.strokeStyle = this.temp_strokeStyle;
+    this.ctx.fillStyle = this.temp_fillStyle;
+    this.ctx.lineWidth = this.temp_lineWidth;
   }
 }

@@ -7,18 +7,25 @@ export default class Eraser extends Brush {
     /**
      * @param {HTMLCanvasElement} canvas - HTML-элемент canvas для рисования.
      */
-    constructor(canvas) {
-        super(canvas);
+    constructor(canvas, socket, id) {
+        super(canvas, socket, id);
     }
 
-    draw(x, y) {
-        let tempStrokeStyle = this.ctx.strokeStyle
-
-        this.ctx.strokeStyle = "white"
-        this.ctx.lineTo(x, y);
-        this.ctx.stroke();
-
-        this.ctx.strokeStyle = tempStrokeStyle
+    mouseMoveHandler(e) {
+        if (this.mouseDown) {
+            this.socket.send(
+                JSON.stringify({
+                    method: 'draw',
+                    id: this.id,
+                    figure: {
+                        type: 'brush',
+                        x: e.pageX - e.target.offsetLeft,
+                        y: e.pageY - e.target.offsetTop,
+                        strokeStyle: "#ffffff",
+                        lineWidth: this.ctx.lineWidth,
+                    },
+                }));
+                
+        }
     }
-
 }
