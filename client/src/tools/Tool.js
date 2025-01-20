@@ -22,9 +22,7 @@ export default class Tool {
         this.ctx = canvas.getContext('2d')
         this.destroyEvents()
 
-        this.tempCanvas = document.createElement('canvas');
-        this.tempCanvas.width = canvas.width;
-        this.tempCanvas.height = canvas.height;
+        this.tempCanvas = new OffscreenCanvas(canvas.width, canvas.height);
         this.tempCtx = this.tempCanvas.getContext('2d');
     }
 

@@ -2,12 +2,12 @@
     <div class="toolbar">
         <button class="toolbar__btn brush" @click="toolstate.setTool(new Brush(canvasState.canvas, canvasState.socket, canvasState.sessionid))"></button>
         <button class="toolbar__btn rect" @click="toolstate.setTool(new Rect(canvasState.canvas, canvasState.socket, canvasState.sessionid))"></button>
-        <button class="toolbar__btn circle" @click="toolstate.setTool(new Circle(canvasState.canvas))"></button>
+        <button class="toolbar__btn circle" @click="toolstate.setTool(new Circle(canvasState.canvas, canvasState.socket, canvasState.sessionid))"></button>
         <button class="toolbar__btn eraser" @click="toolstate.setTool(new Eraser(canvasState.canvas))"></button>
         <button class="toolbar__btn line" @click="toolstate.setTool(new Line(canvasState.canvas))"></button>
         <input @change="changeColor" style="margin-left: 10px;" type="color">
-        <button class="toolbar__btn undo" @click="canvasState.Undo"></button>
-        <button class="toolbar__btn redo" @click="canvasState.Redo"></button>
+        <button class="toolbar__btn undo" @click="History.Undo()"></button>
+        <button class="toolbar__btn redo" @click="History.Redo()"></button>
         <button class="toolbar__btn save"></button>
     </div>
 </template>
@@ -16,6 +16,7 @@
 /* eslint-disable */
 import canvasState from '@/store/canvasState';
 import toolstate from '@/store/toolstate';
+import History from '@/tools/History';
 import Brush from '@/tools/Brush';
 import Rect from '@/tools/Rect';
 import Circle from '@/tools/Circle';
@@ -32,7 +33,8 @@ export default {
             Rect,
             Circle,
             Eraser,
-            Line
+            Line,
+            History
         };
     },
     methods: {

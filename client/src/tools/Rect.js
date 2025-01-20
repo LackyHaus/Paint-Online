@@ -21,9 +21,9 @@ export default class Rect extends Tool {
 
     mouseUpHandler() {
         this.mouseDown = false;
-        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.ctx.drawImage(this.tempCanvas, 0, 0);
+        this.restoreCanvasState();
 
+        if (this.width > 0 || this.height > 0) {
         this.socket.send(
             JSON.stringify({
                 method: 'draw',
@@ -34,11 +34,21 @@ export default class Rect extends Tool {
                     y: this.startY,
                     width: this.width,
                     height: this.height,
-                    color: this.ctx.fillStyle,
+                    strokeStyle: this.ctx.strokeStyle,
                     lineWidth: this.ctx.lineWidth,
                     fillStyle: this.ctx.fillStyle,
                 },
             }));
+
+        this.socket.send(
+            JSON.stringify({
+                method: 'draw',
+                id: this.id,
+                figure: {
+                    type: 'up'
+                },
+            }));
+        }
         
         this.width = 0;
         this.height = 0;
@@ -50,8 +60,19 @@ export default class Rect extends Tool {
         this.mouseDown = true;
         this.startX = e.pageX - e.target.offsetLeft;
         this.startY = e.pageY - e.target.offsetTop;
-        this.tempCtx.drawImage(this.canvas, 0, 0);
+        this.saveCanvasState();
     }
+    
+    saveCanvasState() {
+        this.savedImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    restoreCanvasState() {
+        if (this.savedImageData) {
+            this.ctx.putImageData(this.savedImageData, 0, 0);
+        }
+    }
+
 
     mouseMoveHandler(e) {
         if (this.mouseDown) {
@@ -65,8 +86,8 @@ export default class Rect extends Tool {
     }
 
     draw(x, y, w, h) {
-        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-        this.ctx.drawImage(this.tempCanvas, 0, 0);
+        console.log("Draw client!", x, y, w, h, this.ctx.fillStyle, this.ctx.lineWidth, this.ctx.strokeStyle);
+        this.restoreCanvasState();
         this.ctx.beginPath();
         this.ctx.rect(x, y, w, h);
         this.ctx.fill();

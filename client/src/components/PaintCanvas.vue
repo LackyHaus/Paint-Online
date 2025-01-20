@@ -8,6 +8,7 @@
 import { onMounted, ref } from "vue";
 import { webSocketConnection } from "@/utils/webSocket";
 import canvasState from "@/store/canvasState"; // Подключаем canvasState
+import History from "@/tools/History";
 
 export default {
   name: "PaintCanvas",
@@ -28,14 +29,14 @@ export default {
   
   methods: {
     mouseDownHandler() {
-      canvasState.pushToUndo();
+      History.pushToUndo();
     },
 
     keyupHandler(event) {
       if (event.ctrlKey && event.shiftKey && (event.key === "Z" || event.key === "Я")) {
-        canvasState.Redo();
+        History.Redo();
       } else if (event.ctrlKey && (event.key === "z" || event.key === "я")) {
-        canvasState.Undo();
+        History.Undo();
       }
     }
   },

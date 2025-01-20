@@ -7,9 +7,9 @@ export default class ToolsSync {
     this.socket = socket;
     this.id = id;
     this.ctx = canvasState.ctx;
-    this.ctx.strokeStyle = msg.figure.color;
-    this.ctx.fillStyle = msg.figure.color;
-    this.ctx.lineWidth = msg.figure.width;
+    this.ctx.strokeStyle = msg.figure.strokeStyle;
+    this.ctx.fillStyle = msg.figure.fillStyle;
+    this.ctx.lineWidth = msg.figure.lineWidth;
     this.handleDraw();
   }
 
@@ -22,11 +22,11 @@ export default class ToolsSync {
         break;
 
       case "rect":
-        this.drawRect(figure.x, figure.y, figure.width, figure.height, figure.color, figure.lineWidth, figure.fillStyle);
+        this.drawRect(figure.x, figure.y, figure.width, figure.height);
         break;
 
       case "circle":
-        // Добавьте логику для рисования круга
+        this.drawCircle(figure.x, figure.y, figure.radius);
         break;
 
       case "eraser":
@@ -43,6 +43,8 @@ export default class ToolsSync {
         break;
       }
 
+      case "undo":
+      case "redo":
       case "canvasState": {
         if (figure.canvasState === "") {
           return;
@@ -53,15 +55,6 @@ export default class ToolsSync {
           this.ctx.clearRect(0, 0, canvasState.canvas.width, canvasState.canvas.height);
           this.ctx.drawImage(img, 0, 0);
         };
-
-        // const buffer = JSON.parse(figure.canvasState);
-        // const view = new DataView(buffer);
-        // const width = view.getUint32(0, true);
-        // const height = view.getUint32(4, true);
-        // const imageData = new ImageData(new Uint8ClampedArray(buffer, 8), width, height);
-        // const ctx = canvasState.canvas.getContext('2d');
-        // ctx.putImageData(imageData, 0, 0);
-        
         break;
       }
 
@@ -70,14 +63,19 @@ export default class ToolsSync {
     }
   }
 
-  drawRect(x, y, w, h, color, lineWidth, fillStyle) { // Рисуем прямоугольник
+  drawRect(x, y, w, h) { // Рисуем прямоугольник
+    console.log("Draw server!", x, y, w, h, this.ctx.fillStyle, this.ctx.lineWidth, this.ctx.strokeStyle);
     this.ctx.beginPath();
     this.ctx.rect(x, y, w, h);
-    this.ctx.lineWidth = lineWidth;
-    this.ctx.strokeStyle = color;
-    this.ctx.fillStyle = fillStyle;
-    this.ctx.stroke();
     this.ctx.fill();
+    this.ctx.stroke();
+  }
+
+  drawCircle(x, y, r) { // Рисуем круг
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, r, 0, 2 * Math.PI, false);
+    this.ctx.fill();
+    this.ctx.stroke();
   }
 
 // eslint-disable-next-line
@@ -92,38 +90,5 @@ export default class ToolsSync {
         },
       })
     );
-
-    // const ctx = canvasState.canvas.getContext('2d');
-    // const width = canvasState.canvas.width;
-    // const height = canvasState.canvas.height;
-    // const imageData = ctx.getImageData(0, 0, width, height);
-    // const data = imageData.data; // Uint8ClampedArray
-
-    // // Создадим общий буфер:
-    // //  4 байта под ширину
-    // //  4 байта под высоту
-    // //  остаток под сами пиксели
-    // const buffer = new ArrayBuffer(8 + data.length);
-    // const view = new DataView(buffer);
-
-    // // Запишем ширину/высоту (Uint32, порядок little-endian)
-    // view.setUint32(0, width, true);
-    // view.setUint32(4, height, true);
-
-    // // Копируем сами пиксели (начиная с 8-го байта буфера)
-    // new Uint8Array(buffer, 8).set(data);
-
-    // // Отправим буфер на сервер
-    // socket.send(
-    //   JSON.stringify({
-    //     id,
-    //     method: "save",
-    //     figure: {
-    //       type: "canvasState",
-    //       canvasState: JSON.stringify(buffer),
-    //     },
-    //   })
-    // );
-
   }
 }
