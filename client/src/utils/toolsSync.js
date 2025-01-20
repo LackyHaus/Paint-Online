@@ -33,7 +33,7 @@ export default class ToolsSync {
         break;
 
       case "line":
-        // Добавьте логику для рисования линии
+        this.drawLine(figure.x, figure.y, figure.x2, figure.y2);
         break;
 
       case "up": {
@@ -62,6 +62,13 @@ export default class ToolsSync {
         console.log("Unknown figure type:", figure.type);
     }
     this.restoreStatus();
+  }
+
+  drawLine(x, y, x2, y2) { // Рисуем линию
+    this.ctx.beginPath();
+    this.ctx.moveTo(x, y);
+    this.ctx.lineTo(x2, y2);
+    this.ctx.stroke();
   }
 
   drawBrush(x, y) { // Рисуем кисть

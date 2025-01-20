@@ -8,7 +8,7 @@
         <input @change="changeColor" style="margin-left: 10px;" type="color">
         <button class="toolbar__btn undo" @click="History.Undo()"></button>
         <button class="toolbar__btn redo" @click="History.Redo()"></button>
-        <button class="toolbar__btn save"></button>
+        <button class="toolbar__btn save" @click="saveImage()"></button>
     </div>
 </template>
 
@@ -41,6 +41,12 @@ export default {
         changeColor(e) {
             toolstate.setStrokeColor(e.target.value)
             toolstate.setFillColor(e.target.value)
+        },
+        saveImage() {
+            const link = document.createElement('a');
+            link.href = canvasState.canvas.toDataURL('image/png');
+            link.download = 'canvas_image.png';
+            link.click();
         }
     }
 };
